@@ -4,13 +4,11 @@
 # https://docs.scrapy.org/en/latest/topics/items.html
 
 import scrapy
-from itemloaders.processors import Join, MapCompose, TakeFirst
+from itemloaders.processors import Identity, MapCompose, TakeFirst
 import scrapy.item
 from w3lib.html import remove_tags
 
 class SupermarketScraperItem(scrapy.Item):
-    # define the fields for your item here like:
-    # name = scrapy.Field()
     # Name field: Strip HTML tags and take the first result
     name = scrapy.Field(
         input_processor=MapCompose(remove_tags, str.strip),
@@ -20,7 +18,6 @@ class SupermarketScraperItem(scrapy.Item):
     # Category field: Strip HTML tags and take the first result
     category = scrapy.Field(
         input_processor=MapCompose(remove_tags, str.strip),
-        output_processor=TakeFirst(),
     )
 
     # Description field: Strip HTML tags, join multiple paragraphs with a space

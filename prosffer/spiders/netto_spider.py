@@ -2,6 +2,7 @@ from scrapy.spiders import CrawlSpider, Rule
 from scrapy.linkextractors import LinkExtractor
 from ..items import SupermarketScraperItem
 from scrapy.loader import ItemLoader
+from scrapy.loader.processors import TakeFirst
 
 
 class NettoSpider(CrawlSpider):
@@ -46,8 +47,11 @@ class NettoSpider(CrawlSpider):
             price = None
 
         l.add_value("price", price)
+
         currency = "€"
         l.add_value("currency", currency)
+
+        l.default_output_processor = TakeFirst()
         l.add_css("category", 'li.breadcrumb__item:nth-child(3) span[itemprop="name"]::text')
 
         description = response.css("div.editContent.tc-product-description h2::text").get()
