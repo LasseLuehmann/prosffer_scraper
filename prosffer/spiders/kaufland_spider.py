@@ -3,6 +3,7 @@ from scrapy.linkextractors import LinkExtractor
 from ..items import SupermarketScraperItem
 from scrapy.loader import ItemLoader
 from scrapy.loader.processors import TakeFirst
+import re
 
 
 class KauflandSpider(CrawlSpider):
@@ -21,10 +22,10 @@ class KauflandSpider(CrawlSpider):
         Rule(LinkExtractor(allow=(r'/backwaren/',))),
         Rule(LinkExtractor(allow=(r'/kaese-und-milchprodukte/',))),
         Rule(LinkExtractor(allow=(r'/fleisch-und-fisch/',))),
-        # Rule(LinkExtractor(allow=(r'/lebensmittel/',))),
+        # Rule(LinkExtractor(allow=(r'[A-Za-z0-9-]+/',))),
 
         # Rule to follow category URLs containing 'Content-Kachel+Spirituosen'
-        Rule(LinkExtractor(allow=(r'https://www.kaufland.de/product/\d{9}/.*',)), callback='parse_item'),
+        Rule(LinkExtractor(allow=(r'https://www.kaufland.de/product/\d{9}/[.]*',)), callback='parse_item'),
     )
 
     def parse_item(self, response):
@@ -34,11 +35,13 @@ class KauflandSpider(CrawlSpider):
 
         whole_price = response.css("span.rd-price-information__price::text").get().strip()
         
-        try:
+        if re.search('\xa0', whole_price):
             price = whole_price.replace('\xa0€','').replace(',','.')
             price = float(price)
-        except ValueError:
-            price = None
+        else:
+            price = whole_price.replace(' €','').replace(',','.')
+            price = float(price)
+            
         l.add_value("price", price)
 
         currency = whole_price[-1]
