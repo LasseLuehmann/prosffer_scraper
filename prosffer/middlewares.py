@@ -4,12 +4,14 @@
 # https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 
 from scrapy import signals
+from .settings import USER_AGENTS
+import random
 
 # useful for handling different item types with a single interface
 from itemadapter import is_item, ItemAdapter
 
 
-class ProsfferSpiderMiddleware:
+class NettoScraperSpiderMiddleware:
     # Not all methods need to be defined. If a method is not defined,
     # scrapy acts as if the spider middleware does not modify the
     # passed objects.
@@ -56,7 +58,7 @@ class ProsfferSpiderMiddleware:
         spider.logger.info("Spider opened: %s" % spider.name)
 
 
-class ProsfferDownloaderMiddleware:
+class NettoScraperDownloaderMiddleware:
     # Not all methods need to be defined. If a method is not defined,
     # scrapy acts as if the downloader middleware does not modify the
     # passed objects.
@@ -101,3 +103,18 @@ class ProsfferDownloaderMiddleware:
 
     def spider_opened(self, spider):
         spider.logger.info("Spider opened: %s" % spider.name)
+
+class RandomUserAgentMiddleware:
+    def __init__(self, user_agents):
+        self.user_agents = user_agents
+
+    @classmethod
+    def from_crawler(cls, crawler):
+        return cls(
+            user_agents=crawler.settings.get('USER_AGENTS')
+        )
+
+    def process_request(self, request, spider):
+        user_agent = random.choice(USER_AGENTS)
+        request.headers['User-Agent'] = user_agent
+        spider.logger.info(f"Using User-Agent: {user_agent}")

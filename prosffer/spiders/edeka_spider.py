@@ -2,7 +2,8 @@ from scrapy.spiders import CrawlSpider, Rule
 from scrapy.linkextractors import LinkExtractor
 from ..items import SupermarketScraperItem
 from scrapy.loader import ItemLoader
-from scrapy.loader.processors import Identity
+from itemloaders.processors import Identity
+import html
 
 
 class EdekaSpider(CrawlSpider):
@@ -49,6 +50,8 @@ class EdekaSpider(CrawlSpider):
         # Now scrape the product details
         l = ItemLoader(item=SupermarketScraperItem(), response=response)
 
+        store = 'Edeka'
+        l.add_value('store', store)
         # Extract product name
         name = response.css('h1::text').get()
         if name:
@@ -58,20 +61,27 @@ class EdekaSpider(CrawlSpider):
 
         # Extract price (with error handling for missing price)
         price_str = response.css('div.price::text').get()
+
         if price_str:
             price_clean = price_str.replace('€', '').replace(',', '.').strip()
-            price_float = float(price_clean)
-            l.add_value('price', price_float)
-
-            # Extract currency
-            currency = ''.join([char for char in price_str if not char.isdigit() and char != ',' and char != '.']).strip()
-            l.add_value('currency', currency)
+            try:
+                price_float = float(price_clean)
+            except ValueError:
+                price_float = 0.0  # In case the price string is invalid
         else:
-            self.logger.warning(f"Price not found on {response.url}")
+            price_float = 0.0  # Default price if not found
+
+        l.add_value('price', price_float)
+
+
+        # Extract currency
+        currency = ''.join([char for char in price_str if not char.isdigit() and char != ',' and char != '.']).strip()
+        l.add_value('currency', currency)
 
         l.get_output_processor('category').default_output_processor = Identity()
         # Extract category/subcategory (skip the first breadcrumb element)
         category = response.css('div.breadcrumb ul li a::attr(title)').getall()[1:]
+        category = [html.unescape(cat) for cat in category]
         if category:
             l.add_value("category", category)
         else:
