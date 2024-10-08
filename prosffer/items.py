@@ -1,8 +1,3 @@
-# Define here the models for your scraped items
-#
-# See documentation in:
-# https://docs.scrapy.org/en/latest/topics/items.html
-
 import scrapy
 from itemloaders.processors import Identity, MapCompose, TakeFirst
 import scrapy.item
@@ -44,3 +39,10 @@ class SupermarketScraperItem(scrapy.Item):
         output_processor=TakeFirst(),
     )
 
+    store = scrapy.Field(
+        output_processor=TakeFirst(),
+    )
+
+    id_tag = scrapy.Field(
+        output_processor=TakeFirst(),
+    )

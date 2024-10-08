@@ -2,7 +2,7 @@ from scrapy.spiders import CrawlSpider, Rule
 from scrapy.linkextractors import LinkExtractor
 from ..items import SupermarketScraperItem
 from scrapy.loader import ItemLoader
-from scrapy.loader.processors import TakeFirst
+from itemloaders.processors import TakeFirst
 
 
 class AldiSuedSpider(CrawlSpider):
@@ -22,6 +22,9 @@ class AldiSuedSpider(CrawlSpider):
     def parse_item(self, response):
         l = ItemLoader(item=SupermarketScraperItem(), response=response)
 
+        store = 'Aldi Süd'
+        l.add_value('store', store)
+
         l.add_css("name","h1::attr(data-product-name)")
 
         price = response.css("span.pdp_price__now::attr(data-price)").get()
@@ -33,7 +36,7 @@ class AldiSuedSpider(CrawlSpider):
 
         l.add_css("currency", "span.pdp_price__now::attr(data-currency)")
 
-        l.default_output_processor = TakeFirst()
+        l.get_output_processor('category').default_output_processor = TakeFirst()
         l.add_css("category", "ol.breadcrumb li:last-child a::text")
 
         description = response.css("div.infobox ul li::text").getall()

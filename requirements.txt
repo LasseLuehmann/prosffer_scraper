@@ -1,1 +1,4 @@
 scrapy==2.11.2
+psycopg2==2.9.9
+psycopg2-binary==2.9.9
+environs==11.0.0
