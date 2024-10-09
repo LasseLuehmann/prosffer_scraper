@@ -10,23 +10,15 @@
 8. in here you have to create a file called `run_spider.sh`
 9. add the following code to that file
    `#!/bin/bash
-
     cd /path/to/your/repo/prosffer_scraper
-    
     source .venv/bin/activate
-    
     scrapy crawl kaufland &&
-    
     scrapy crawl netto &&
-    
     scrapy crawl aldi_sued &&
-    
     scrapy crawl edeka
-    
     wait
-    
     deactivate`
-10. additionaly add a .env file wich contains your Database information like
+11. additionaly add a .env file wich contains your Database information like
     `DB_NAME=prosffer_db
      DB_USER=prosffer_user
      DB_PWD=password123
