@@ -53,7 +53,7 @@ class AldiNordSpider(CrawlSpider):
         image_urls = set()
 
         # Loop through all script tags and find the one with the ImageObject type
-        for script in response.css('script::text').getall():
+        for script in response.css('.mod-article-intro__gallery script::text').getall():
             if '"@type": "ImageObject"' in script:
                 try:
                     # Parse the JSON-LD content

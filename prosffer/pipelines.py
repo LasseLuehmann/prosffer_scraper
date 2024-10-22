@@ -91,7 +91,7 @@ class SupermarketScraperPipeline:
             ('bbq', 'BBQ & Grilling'),
             ('salat', 'Salads'),
             ('nudeln', 'Pasta, Rice & Legumes'),
-            ('reis', 'Pasta, Rice & Legumes'),
+            # ('reis', 'Pasta, Rice & Legumes'),
             ('hülsenfrüchte', 'Pasta, Rice & Legumes'),
             ('suppe', 'Canned Goods'),
             ('müsli', 'Cereals & Bars'),
